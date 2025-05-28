@@ -1,5 +1,5 @@
-from services import LoginData, RegistrData
-from base_of_data import DataBaseManager
+from schoolring.services import LoginData, RegistrData
+from schoolring.base_of_data import DataBaseManager
 
 
 class PhoneError(Exception):

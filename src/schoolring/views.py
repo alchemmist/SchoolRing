@@ -1,9 +1,7 @@
+import os
 import datetime
 import sys
 import threading
-from multiprocessing import Queue
-
-import schedule
 from PyQt6 import QtWidgets
 from PyQt6 import uic
 from PyQt6.QtWidgets import (
@@ -14,27 +12,34 @@ from PyQt6.QtWidgets import (
     QRadioButton,
     QVBoxLayout,
     QFileDialog,
-    QCheckBox
+    QCheckBox,
 )
 
-from base_of_data import DataBaseManager
-from datacheking import LoginChecker, RegistrChecker
-from datacheking import PhoneError, PasswordError, FIOError, SchoolError, LoginError
-from services import LoginData, RegistrData
-from services import ringsystem_power, serch_time_for_nearest_ring
+from schoolring.base_of_data import DataBaseManager
+from schoolring.datacheking import LoginChecker, RegistrChecker
+from schoolring.datacheking import (
+    PhoneError,
+    PasswordError,
+    FIOError,
+    SchoolError,
+    LoginError,
+)
+from schoolring.services import LoginData, RegistrData
+from schoolring.services import ringsystem_power, serch_time_for_nearest_ring
 
 # Encoding for the time module with days of the week
 translator_of_weekday = {
-    0: 'Понедельник',
-    1: 'Вторник',
-    2: 'Среда',
-    3: 'Четверг',
-    4: 'Пятница',
-    5: 'Суббота',
-    6: 'Воскресенье',
+    0: "Понедельник",
+    1: "Вторник",
+    2: "Среда",
+    3: "Четверг",
+    4: "Пятница",
+    5: "Суббота",
+    6: "Воскресенье",
 }
 
 big_check = 0
+
 
 class Window(QMainWindow):
     """Main user interaction window"""
@@ -43,15 +48,16 @@ class Window(QMainWindow):
         """Create mainwindow"""
 
         super().__init__()
-        uic.loadUi('ui/main.ui', self)
+        cwd = os.getcwd()
+        uic.loadUi("./src/ui/main.ui", self)
         self.initUI()
 
     def initUI(self):
         """Program initialization"""
 
-        uic.loadUi('ui/main.ui', self)
+        uic.loadUi("./src/ui/main.ui", self)
         self.is_logined = False
-        self.defoult_template = ''
+        self.defoult_template = ""
         self.load_ui()
 
         self.connect_button()
@@ -68,23 +74,23 @@ class Window(QMainWindow):
     def load_ui(self):
         """Loads and saves all dialogs in the application"""
 
-        self.login_window = uic.loadUi('ui/logining.ui')
-        self.registration_window = uic.loadUi('ui/registration.ui')
-        self.sucsesfuly_window = uic.loadUi('ui/sucsesfully.ui')
-        self.error_window = uic.loadUi('ui/error.ui')
-        self.authorization_window = uic.loadUi('ui/authorization.ui')
+        self.login_window = uic.loadUi("./src/ui/logining.ui")
+        self.registration_window = uic.loadUi("./src/ui/registration.ui")
+        self.sucsesfuly_window = uic.loadUi("./src/ui/sucsesfully.ui")
+        self.error_window = uic.loadUi("./src/ui/error.ui")
+        self.authorization_window = uic.loadUi("./src/ui/authorization.ui")
 
-        self.set_schedule_on_day_window = uic.loadUi('ui/set_schedul_on_day.ui')
-        self.delete_schedule_on_day_window = uic.loadUi('ui/delete_schedul_on_day.ui')
+        self.set_schedule_on_day_window = uic.loadUi("./src/ui/set_schedul_on_day.ui")
+        self.delete_schedule_on_day_window = uic.loadUi("./src/ui/delete_schedul_on_day.ui")
 
-        self.choose_defoult_template = uic.loadUi('ui/choose_defoult_templateui.ui')
-        self.add_templ = uic.loadUi('ui/add_template_frame.ui')
-        self.active_schedule_window = uic.loadUi('ui/active_schedule.ui')
-        self.naming_temp = uic.loadUi('ui/get_name_templ.ui')
+        self.choose_defoult_template = uic.loadUi("./src/ui/choose_defoult_templateui.ui")
+        self.add_templ = uic.loadUi("./src/ui/add_template_frame.ui")
+        self.active_schedule_window = uic.loadUi("./src/ui/active_schedule.ui")
+        self.naming_temp = uic.loadUi("./src/ui/get_name_templ.ui")
 
-        self.new_template = uic.loadUi('ui/create_schedule.ui')
+        self.new_template = uic.loadUi("./src/ui/create_schedule.ui")
 
-        self.locked_window = uic.loadUi('ui/lock.ui')
+        self.locked_window = uic.loadUi("./src/ui/lock.ui")
 
     def connect_button(self):
         """Connect button in main window"""
@@ -97,18 +103,24 @@ class Window(QMainWindow):
         self.login_button_cerkle.clicked.connect(self.authorization)
         self.login_button_text.clicked.connect(self.authorization)
         self.authorization_window.start_login_button.clicked.connect(self.logining)
-        self.authorization_window.start_regisration_button.clicked.connect(self.registring)
+        self.authorization_window.start_regisration_button.clicked.connect(
+            self.registring
+        )
         # timetable
         self.DELETE_schedule_button.clicked.connect(self.delete_special_day)
         self.ADD_schedule_button.clicked.connect(self.add_special_day)
-        self.set_schedule_on_day_window.add_schedule_button.clicked.connect(self.finish000templ)
+        self.set_schedule_on_day_window.add_schedule_button.clicked.connect(
+            self.finish000templ
+        )
         # # template
         self.edit_defoult_button.clicked.connect(self.change_defoult_template)
 
         # edit template
         self.new_template.add_row_button.clicked.connect(self.add_row_to_schedule)
         self.new_template.browse_file_button.clicked.connect(self.choose_music_file)
-        self.new_template.finish_creating_button.clicked.connect(self.finish_creating_schedule)
+        self.new_template.finish_creating_button.clicked.connect(
+            self.finish_creating_schedule
+        )
         # named
         self.naming_temp.finish_naming_button.clicked.connect(self.finish_neming)
 
@@ -151,7 +163,9 @@ class Window(QMainWindow):
 
         self.authorization_window.hide()
         self.registration_window.show()
-        self.registration_window.go_sistem_button_reg.clicked.connect(self.finish_registration)
+        self.registration_window.go_sistem_button_reg.clicked.connect(
+            self.finish_registration
+        )
 
     def sucsesfully_login(self):
         """Defines the program's actions after successful authorization"""
@@ -196,19 +210,27 @@ class Window(QMainWindow):
                 self.sucsesfully_registration()
         except PhoneError:
             self.error_authorization()
-            self.error_window.message_label.setText('Please check if you have entered your phone number correctly')
+            self.error_window.message_label.setText(
+                "Please check if you have entered your phone number correctly"
+            )
         except PasswordError:
-            self.error_window.message_label.setText("Please check if you have entered your password correctly")
+            self.error_window.message_label.setText(
+                "Please check if you have entered your password correctly"
+            )
             self.error_authorization()
         except FIOError:
-            self.error_window.message_label.setText('Please check if you have entered your FIO correctly')
+            self.error_window.message_label.setText(
+                "Please check if you have entered your FIO correctly"
+            )
             self.error_authorization()
         except SchoolError:
-            self.error_window.message_label.setText('Please check if you have entered your '
-                                                    'school or building number correctly')
+            self.error_window.message_label.setText(
+                "Please check if you have entered your "
+                "school or building number correctly"
+            )
             self.error_authorization()
         except LoginError:
-            self.error_window.message_label.setText('This login already used')
+            self.error_window.message_label.setText("This login already used")
             self.error_authorization()
 
     def finish_login(self):
@@ -220,10 +242,14 @@ class Window(QMainWindow):
             if checker.is_correct:
                 self.sucsesfully_login()
         except LoginError:
-            self.error_window.message_label.setText('Please check if you have entered your login correctly')
+            self.error_window.message_label.setText(
+                "Please check if you have entered your login correctly"
+            )
             self.error_authorization()
         except PasswordError:
-            self.error_window.message_label.setText('Please check if you have entered your password correctly')
+            self.error_window.message_label.setText(
+                "Please check if you have entered your password correctly"
+            )
             self.error_authorization()
 
     def get_log_data(self) -> LoginData:
@@ -231,7 +257,7 @@ class Window(QMainWindow):
 
         return LoginData(
             self.login_window.login_lineEdit.text(),
-            self.login_window.password_lineEdit.text()
+            self.login_window.password_lineEdit.text(),
         )
 
     def get_reg_data(self) -> RegistrData:
@@ -244,7 +270,7 @@ class Window(QMainWindow):
             self.registration_window.repeat_pw_lineEdit.text(),
             self.registration_window.school_num_lineEdit.text(),
             self.registration_window.building_num_lineEdit.text(),
-            self.registration_window.phone_num_lineEdit.text()
+            self.registration_window.phone_num_lineEdit.text(),
         )
 
     def interface_change(self):
@@ -259,7 +285,7 @@ class Window(QMainWindow):
         """Change interface after successful authorization"""
         name = FIO.strip().split()[1]
         if len(name) > 8:
-            name = name[0:7] + '...'
+            name = name[0:7] + "..."
         self.login_button_text.setText(name)
         self.login_button_cerkle.setText(name[0])
 
@@ -277,15 +303,13 @@ class Window(QMainWindow):
         self.today_sched = sorted(self.today_sched, key=lambda x: x[0])
         layout = QHBoxLayout()
         for i in self.today_sched:
-            widget = uic.loadUi('ui/frame_for_home.ui')
+            widget = uic.loadUi("./src/ui/frame_for_home.ui")
             widget.title.setText(i[2])
             widget.time.setText(i[0])
             widget.music.setText(i[1])
             layout.addWidget(widget)
         group_box = QGroupBox()
-        group_box.setStyleSheet(
-            'border: 0px'
-        )
+        group_box.setStyleSheet("border: 0px")
         group_box.setLayout(layout)
         self.scrollArea.setWidget(group_box)
         self.scrollArea.setWidgetResizable(True)
@@ -294,7 +318,7 @@ class Window(QMainWindow):
         """Displaying data to status widget with date"""
 
         self.today_label.setText(
-            f'{translator_of_weekday[datetime.datetime.today().weekday()]}\n'
+            f"{translator_of_weekday[datetime.datetime.today().weekday()]}\n"
             f'{datetime.date.today().strftime("%d-%m-%Y")}'
         )
 
@@ -302,9 +326,7 @@ class Window(QMainWindow):
         """Displaying data to status widget with nearst ring"""
 
         tm, music = serch_time_for_nearest_ring(self.today_sched)
-        self.nearest_label.setText(
-            f'Через {tm} минут прозвенит {music[0:-4]}'
-        )
+        self.nearest_label.setText(f"Через {tm} минут прозвенит {music[0:-4]}")
 
     def set_item_to_timetable(self):
         """Displaying actual data on widgets on a timetable page"""
@@ -319,14 +341,12 @@ class Window(QMainWindow):
         templates = self.bd_manager.get_active_templates()
         layout = QVBoxLayout()
         for title, date in templates:
-            widget = uic.loadUi('ui/active_schedule.ui')
+            widget = uic.loadUi("./src/ui/active_schedule.ui")
             widget.title_label.setText(title)
             widget.date_label.setText(date)
             layout.addWidget(widget)
         group_box = QGroupBox()
-        group_box.setStyleSheet(
-            'border: 0px'
-        )
+        group_box.setStyleSheet("border: 0px")
         group_box.setLayout(layout)
         self.scrollArea_2.setWidget(group_box)
         self.scrollArea_2.setWidgetResizable(True)
@@ -358,7 +378,7 @@ class Window(QMainWindow):
 
     def finish000templ(self):
         template = self.set_schedule_on_day_window.time_tamble_combobox.currentText()
-        date = str(self.set_schedule_on_day_window.dateEdit.text()).replace('-', '.')
+        date = str(self.set_schedule_on_day_window.dateEdit.text()).replace("-", ".")
 
         self._save_to_bd(template, date)
         self._init_list_special_day()
@@ -377,21 +397,17 @@ class Window(QMainWindow):
         self.chekboxes = []
 
         for title, date in templates:
-            widget = QCheckBox(f'{title}, {date}')
+            widget = QCheckBox(f"{title}, {date}")
 
             f = widget.font()
             f.setPointSize(17)  # sets the size to 27
             widget.setFont(f)
-            widget.setStyleSheet(
-                'color: white'
-            )
+            widget.setStyleSheet("color: white")
 
             self.chekboxes.append(widget)
             layout.addWidget(widget)
         group_box = QGroupBox()
-        group_box.setStyleSheet(
-            'border: 0px'
-        )
+        group_box.setStyleSheet("border: 0px")
         group_box.setLayout(layout)
 
         self.delete_schedule_on_day_window.scrollArea.setWidget(group_box)
@@ -402,14 +418,16 @@ class Window(QMainWindow):
         if self.is_logined:
             self._init_delete_sched_window()
             self.delete_schedule_on_day_window.show()
-            self.delete_schedule_on_day_window.ok_delete_button.clicked.connect(self.finish_deleting_template)
+            self.delete_schedule_on_day_window.ok_delete_button.clicked.connect(
+                self.finish_deleting_template
+            )
         else:
             self.locked_window.show()
 
     def finish_deleting_template(self):
         for i in self.chekboxes:
             if i.isChecked():
-                temaplate, date = i.text().split(', ')
+                temaplate, date = i.text().split(", ")
                 self.bd_manager.delete_special_date(temaplate, date)
         self._init_list_special_day()
         self.delete_schedule_on_day_window.hide()
@@ -421,9 +439,9 @@ class Window(QMainWindow):
 
     def choosing_file(self):
         path = QFileDialog.getOpenFileName(
-            self, 'Выбрать картинку', '',
-            'Музыка (*.mp3);;Все файлы (*)')[0]
-        file_name = path.split('/')[-1]
+            self, "Выбрать картинку", "", "Музыка (*.mp3);;Все файлы (*)"
+        )[0]
+        file_name = path.split("/")[-1]
         return file_name
 
     def choose_music_file(self):
@@ -436,16 +454,22 @@ class Window(QMainWindow):
         self.new_template.tableWidget.clearSpans()
         combobx_text = self.new_template.templates_combobox.currentText()
         ch = 0
-        if combobx_text == '' or combobx_text == 'New':
+        if combobx_text == "" or combobx_text == "New":
             while self.new_template.tableWidget.rowCount() > 0:
                 self.new_template.tableWidget.removeRow(0)
         else:
             self.template = self.bd_manager.get_schedule(combobx_text)
             self.new_template.tableWidget.setRowCount(len(self.template))
             for i, value in enumerate(self.template):
-                self.new_template.tableWidget.setItem(i, 0, QtWidgets.QTableWidgetItem(value[0]))
-                self.new_template.tableWidget.setItem(i, 1, QtWidgets.QTableWidgetItem(value[1]))
-                self.new_template.tableWidget.setItem(i, 2, QtWidgets.QTableWidgetItem(value[2]))
+                self.new_template.tableWidget.setItem(
+                    i, 0, QtWidgets.QTableWidgetItem(value[0])
+                )
+                self.new_template.tableWidget.setItem(
+                    i, 1, QtWidgets.QTableWidgetItem(value[1])
+                )
+                self.new_template.tableWidget.setItem(
+                    i, 2, QtWidgets.QTableWidgetItem(value[2])
+                )
 
     def finish_creating_schedule(self):
         self.naming_template()
@@ -467,11 +491,13 @@ class Window(QMainWindow):
     def change_defoult_template(self):
         self.choose_defoult_template.show()
         self.init_template_radiobutton()
-        self.choose_defoult_template.finish_chiise_button.clicked.connect(self.save_defoult_template)
+        self.choose_defoult_template.finish_chiise_button.clicked.connect(
+            self.save_defoult_template
+        )
 
     def save_defoult_template(self):
         self.choose_defoult_template.hide()
-        self.label.setText(f'По умолчанию - {self.defoult_template}')
+        self.label.setText(f"По умолчанию - {self.defoult_template}")
         self.bd_manager.save_default(self.defoult_template)
         # self.bd_manager.was_change_default()
         # stop_event = threading.Event()
@@ -483,9 +509,7 @@ class Window(QMainWindow):
         for i in templates:
             widget = QRadioButton(i)
             widget.setStyleSheet(
-                'background-color: #0080ff;\n'
-                'border-radius: 10;\n'
-                'color: white\n'
+                "background-color: #0080ff;\n" "border-radius: 10;\n" "color: white\n"
             )
             widget.setGeometry(100, 100, 273, 45)
             widget.setFixedSize(273, 45)
@@ -494,15 +518,11 @@ class Window(QMainWindow):
             f = widget.font()
             f.setPointSize(13)  # sets the size to 27
             widget.setFont(f)
-            widget.setStyleSheet(
-                'color: white'
-            )
+            widget.setStyleSheet("color: white")
 
             layout.addWidget(widget)
         group_box = QGroupBox()
-        group_box.setStyleSheet(
-            'border: 0px'
-        )
+        group_box.setStyleSheet("border: 0px")
         group_box.setLayout(layout)
         self.choose_defoult_template.scrollArea_6.setWidget(group_box)
         self.choose_defoult_template.scrollArea_6.setWidgetResizable(True)
@@ -521,7 +541,7 @@ class Window(QMainWindow):
         x = 0
         y = 0
         for ind, i in enumerate(templates):
-            widget = uic.loadUi('ui/one_template.ui')
+            widget = uic.loadUi("./src/ui/one_template.ui")
             widget.title.setText(i[0])
             widget.edit_template.clicked.connect(self.refactor_template)
             if y > 3:
@@ -529,7 +549,7 @@ class Window(QMainWindow):
                 y = 0
             self.gridLayout.addWidget(widget, x, y)
             y += 1
-        widget = uic.loadUi('ui/add_template_frame.ui')
+        widget = uic.loadUi("./src/ui/add_template_frame.ui")
         widget.new_template_button.clicked.connect(self.create_template)
         if y > 3:
             y = 0
@@ -543,7 +563,9 @@ class Window(QMainWindow):
         self.new_template.show()
         self.__fill_combobox_for_template()
         self.__init_taddy_date_for_template()
-        self.new_template.templates_combobox.currentTextChanged.connect(self.chenge_tableitem_as_template)
+        self.new_template.templates_combobox.currentTextChanged.connect(
+            self.chenge_tableitem_as_template
+        )
 
     def __fill_combobox_for_template(self):
         self.new_template.templates_combobox.clear()
@@ -551,8 +573,8 @@ class Window(QMainWindow):
         for i in templates:
             self.new_template.templates_combobox.addItem(i[0])
 
-        self.new_template.templates_combobox.addItem('New')
-        self.new_template.templates_combobox.setCurrentText('New')
+        self.new_template.templates_combobox.addItem("New")
+        self.new_template.templates_combobox.setCurrentText("New")
         # self.set_schedule_on_day.templates_combobox.currentTextChanged.connect(self.chenge_tableitem_as_template)
 
     def __init_taddy_date_for_template(self):
@@ -569,7 +591,7 @@ class Window(QMainWindow):
         self.save_schedule(name)
         self.new_template.hide()
         self.naming_temp.hide()
-        self.naming_temp.name_lineEdit.setText('')
+        self.naming_temp.name_lineEdit.setText("")
         self.set_item_to_template()
 
 
@@ -582,7 +604,7 @@ def window_power():
     sys.exit(app.exec())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     vew_window = threading.Thread(target=window_power)
     ring_power = threading.Thread(target=ringsystem_power)
     ring_power.start()
