@@ -4,7 +4,7 @@ from typing import NamedTuple
 import schedule
 from audioplayer import AudioPlayer
 
-from base_of_data import DataBaseManager
+from schoolring.base_of_data import DataBaseManager
 
 
 class LoginData(NamedTuple):
