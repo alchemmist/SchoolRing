@@ -1,0 +1,56 @@
+name: Build & Release executable
+on:
+  push:
+    branches: [main]
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Install uv tool
+        uses: astral-sh/setup-uv@v5
+      - name: Install system deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            python3-dev \
+            libcairo2-dev \
+            libgirepository1.0-dev \
+            gir1.2-gtk-3.0 \
+            pkg-config \
+            build-essential \
+            libglib2.0-dev \
+            libgirepository-1.0-1 \
+            gobject-introspection \
+            libgirepository-2.0-dev \
+            gobject-introspection \
+            pkg-config \
+            cmake
+      - name: Install Python per uv lock
+        run: uv python install
+      - name: Sync dependencies
+        run: uv sync --locked --all-extras
+      - name: Build exe via PyInstaller
+        run: uv run pyinstaller --noconfirm --onefile --name schoolring --add-data "assets:assets" --add-data "DB:DB" schoolring/__main__.py
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: myapp-executable
+          path: dist/schoolring
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release ${{ github.run_number }}
+          body: Build from ${{ github.sha }}
+      - name: Upload executable to release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/main
+          asset_name: myapp_${{ runner.os }}_main
+          asset_content_type: application/octet-stream
