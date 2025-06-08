@@ -70,10 +70,9 @@ The program consists of several classes that interact with each other. The main 
 You can find details on the remaining classes in [`docs`](/docs) directory.
 
 ### How to run it
-You can run it manualy with pip and `requirements.txt`, but we recomended use `poetry`:
+One command with `uv`:
 ```sh
-poetry install
-poetry run python -m schoolring.views
+uv run python schoolring/views.py
 ```
 
 ### Questions | Contribute
