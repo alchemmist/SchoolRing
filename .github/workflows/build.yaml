@@ -38,8 +38,7 @@ jobs:
         with:
           name: myapp-executable
           path: dist/schoolring
-       - name: Create GitHub Release
-        id: create_release
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ github.run_number }}
@@ -49,9 +48,8 @@ jobs:
           draft: false
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload executable to release
-        uses: actions/upload-release-asset@v1
+        uses: softprops/action-gh-release@v1
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/schoolring
-          asset_name: myapp_${{ runner.os }}_main
-          asset_content_type: application/octet-stream
+          tag_name: v${{ github.run_number }}
+          files: dist/schoolring
+          token: ${{ secrets.GITHUB_TOKEN }}
