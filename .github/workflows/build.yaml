@@ -38,8 +38,7 @@ jobs:
         with:
           name: myapp-executable
           path: dist/schoolring
-       - name: Create GitHub Release
-        id: create_release
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ github.run_number }}
