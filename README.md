@@ -72,7 +72,7 @@ You can find details on the remaining classes in [`docs`](/docs) directory.
 ### How to run it
 One command with `uv`:
 ```sh
-uv run python schoolring/views.py
+uv run python schoolring
 ```
 
 ### Questions | Contribute
