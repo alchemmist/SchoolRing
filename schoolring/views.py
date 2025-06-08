@@ -48,14 +48,13 @@ class Window(QMainWindow):
         """Create mainwindow"""
 
         super().__init__()
-        cwd = os.getcwd()
-        uic.loadUi("./src/ui/main.ui", self)
+        uic.loadUi("assets/ui/main.ui", self)
         self.initUI()
 
     def initUI(self):
         """Program initialization"""
 
-        uic.loadUi("./src/ui/main.ui", self)
+        uic.loadUi("assets/ui/main.ui", self)
         self.is_logined = False
         self.defoult_template = ""
         self.load_ui()
@@ -74,23 +73,23 @@ class Window(QMainWindow):
     def load_ui(self):
         """Loads and saves all dialogs in the application"""
 
-        self.login_window = uic.loadUi("./src/ui/logining.ui")
-        self.registration_window = uic.loadUi("./src/ui/registration.ui")
-        self.sucsesfuly_window = uic.loadUi("./src/ui/sucsesfully.ui")
-        self.error_window = uic.loadUi("./src/ui/error.ui")
-        self.authorization_window = uic.loadUi("./src/ui/authorization.ui")
+        self.login_window = uic.loadUi("assets/ui/logining.ui")
+        self.registration_window = uic.loadUi("assets/ui/registration.ui")
+        self.sucsesfuly_window = uic.loadUi("assets/ui/sucsesfully.ui")
+        self.error_window = uic.loadUi("assets/ui/error.ui")
+        self.authorization_window = uic.loadUi("assets/ui/authorization.ui")
 
-        self.set_schedule_on_day_window = uic.loadUi("./src/ui/set_schedul_on_day.ui")
-        self.delete_schedule_on_day_window = uic.loadUi("./src/ui/delete_schedul_on_day.ui")
+        self.set_schedule_on_day_window = uic.loadUi("assets/ui/set_schedul_on_day.ui")
+        self.delete_schedule_on_day_window = uic.loadUi("assets/ui/delete_schedul_on_day.ui")
 
-        self.choose_defoult_template = uic.loadUi("./src/ui/choose_defoult_templateui.ui")
-        self.add_templ = uic.loadUi("./src/ui/add_template_frame.ui")
-        self.active_schedule_window = uic.loadUi("./src/ui/active_schedule.ui")
-        self.naming_temp = uic.loadUi("./src/ui/get_name_templ.ui")
+        self.choose_defoult_template = uic.loadUi("assets/ui/choose_defoult_templateui.ui")
+        self.add_templ = uic.loadUi("assets/ui/add_template_frame.ui")
+        self.active_schedule_window = uic.loadUi("assets/ui/active_schedule.ui")
+        self.naming_temp = uic.loadUi("assets/ui/get_name_templ.ui")
 
-        self.new_template = uic.loadUi("./src/ui/create_schedule.ui")
+        self.new_template = uic.loadUi("assets/ui/create_schedule.ui")
 
-        self.locked_window = uic.loadUi("./src/ui/lock.ui")
+        self.locked_window = uic.loadUi("assets/ui/lock.ui")
 
     def connect_button(self):
         """Connect button in main window"""
@@ -303,7 +302,7 @@ class Window(QMainWindow):
         self.today_sched = sorted(self.today_sched, key=lambda x: x[0])
         layout = QHBoxLayout()
         for i in self.today_sched:
-            widget = uic.loadUi("./src/ui/frame_for_home.ui")
+            widget = uic.loadUi("assets/ui/frame_for_home.ui")
             widget.title.setText(i[2])
             widget.time.setText(i[0])
             widget.music.setText(i[1])
@@ -341,7 +340,7 @@ class Window(QMainWindow):
         templates = self.bd_manager.get_active_templates()
         layout = QVBoxLayout()
         for title, date in templates:
-            widget = uic.loadUi("./src/ui/active_schedule.ui")
+            widget = uic.loadUi("assets/ui/active_schedule.ui")
             widget.title_label.setText(title)
             widget.date_label.setText(date)
             layout.addWidget(widget)
@@ -541,7 +540,7 @@ class Window(QMainWindow):
         x = 0
         y = 0
         for ind, i in enumerate(templates):
-            widget = uic.loadUi("./src/ui/one_template.ui")
+            widget = uic.loadUi("assets/ui/one_template.ui")
             widget.title.setText(i[0])
             widget.edit_template.clicked.connect(self.refactor_template)
             if y > 3:
@@ -549,7 +548,7 @@ class Window(QMainWindow):
                 y = 0
             self.gridLayout.addWidget(widget, x, y)
             y += 1
-        widget = uic.loadUi("./src/ui/add_template_frame.ui")
+        widget = uic.loadUi("assets/ui/add_template_frame.ui")
         widget.new_template_button.clicked.connect(self.create_template)
         if y > 3:
             y = 0

@@ -1,0 +1,8 @@
+repos:
+  - repo: local
+    hooks:
+      - id: conver-ui
+        name: Conver .ui files to .py
+        entry: ./convert_ui.py
+        language: system
+        pass_filenames: false

@@ -1,23 +1,12 @@
-[tool.poetry]
-name = "schoolring"
+[project]
+name = "school-ring"
 version = "0.1.0"
-description = ""
-authors = ["alchemmist <anton.ingrish@gmail.com>"]
+description = "Add your description here"
 readme = "README.md"
-
-packages = [
-  { include = "schoolring", from = "src" }
+requires-python = ">=3.12"
+dependencies = [
+    "audioplayer>=0.6",
+    "pyqt6>=6.9.1",
+    "pyqt6-qt6>=6.9.1",
+    "pyqt6-sip>=13.10.2",
 ]
-
-[tool.poetry.dependencies]
-python = "^3.10"
-pyqt6 = "^6.5.0"
-schedule = "^1.2.0"
-audioplayer = "^0.6"
-pygobject = "^3.52.3"
-
-
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"

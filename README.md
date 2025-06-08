@@ -1,4 +1,4 @@
-<h2><img src="./src/icons/main_icon.png" alt="Favicon Preview" width="85" align="center"> SchoolRing</h2>
+<h2><img src="./assets/icons/main_icon.png" alt="Favicon Preview" width="85" align="center"> SchoolRing</h2>
 
 [![Github](https://img.shields.io/badge/alchemmist%2FSchoolRing-blue?logo=github&label=github&color=blue)](https://github.com/alchemmist/SchoolRing)
 ![Last commit](https://img.shields.io/github/last-commit/alchemmist/SchoolRing?style=flat)
